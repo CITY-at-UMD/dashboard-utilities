@@ -6,10 +6,12 @@
 	"devDependencies": {
 		"babel": "^6.23.0",
 		"babel-cli": "^6.26.0",
-		"babel-preset-env": "^1.7.0"
+		"babel-preset-env": "^1.7.0",
+		"rollup": "^0.64.1",
+		"rollup-plugin-uglify": "^4.0.0"
 	},
 	"scripts": {
-		"build": "babel ./src --out-file ./lib/index.js"
+		"build": "rollup -c"
 	},
 	"dependencies": {
 		"@material-ui/core": "^1.4.3",
