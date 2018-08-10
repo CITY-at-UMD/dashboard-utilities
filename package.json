@@ -1,0 +1,14 @@
+{
+	"name": "utilities",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"devDependencies": {
+		"babel": "^6.23.0",
+		"babel-cli": "^6.26.0",
+		"babel-preset-env": "^1.7.0"
+	},
+	"scripts": {
+		"build": "babel ./src --out-dir ./lib"
+	}
+}
