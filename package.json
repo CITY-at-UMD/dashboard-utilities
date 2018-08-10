@@ -9,6 +9,11 @@
 		"babel-preset-env": "^1.7.0"
 	},
 	"scripts": {
-		"build": "babel ./src --out-dir ./lib"
+		"build": "babel ./src --out-file ./lib/index.js"
+	},
+	"dependencies": {
+		"@material-ui/core": "^1.4.3",
+		"date-fns": "^1.29.0",
+		"simple-statistics": "^6.1.0"
 	}
 }
