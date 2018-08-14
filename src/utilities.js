@@ -395,6 +395,10 @@ const TimeseriesObjectToArray = (data, timestamp) => {
   return array;
 };
 // Grouping
+const groupTimeseriesDay = ts =>
+  Object.entries(groupBy(ts, v => startOfDay(v[0]).valueOf())).map(
+    ([day, timeseries]) => [Number(day), timeseries]
+  );
 const groupTimeseries = (data, interval) => {
   //Supported Intervals: day, month, year
   let group = data.map(v => [parse(v[0]).valueOf(), v[1]]).reduce((a, b) => {
@@ -650,6 +654,7 @@ export {
   reduceTimeseries,
   filterTimeseries,
   groupTimeseries,
+  groupTimeseriesDay,
   aggregateTimeSeries,
   totalTimeseries,
   averageTimeseries,

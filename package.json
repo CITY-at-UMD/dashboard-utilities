@@ -1,7 +1,7 @@
 {
 	"name": "utilities",
-	"version": "1.0.1",
-	"main": "index.js",
+	"version": "1.0.2",
+	"main": "dist/index.js",
 	"license": "MIT",
 	"devDependencies": {
 		"babel": "^6.23.0",
@@ -14,12 +14,11 @@
 	"scripts": {
 		"build": "rollup -c"
 	},
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
 	"module": "dist/index.js",
 	"dependencies": {
 		"@material-ui/core": "^1.4.3",
 		"date-fns": "^1.29.0",
+		"lodash": "^4.17.10",
 		"simple-statistics": "^6.1.0"
 	}
 }
