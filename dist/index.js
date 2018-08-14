@@ -4,6 +4,7 @@ var simpleStatistics = require('simple-statistics');
 var dateFns = require('date-fns');
 var colors = require('@material-ui/core/colors');
 
+const { groupBy } = require("lodash");
 // Conversions
 const conversionFactors = {
   electricity: {

@@ -2,6 +2,7 @@ import { mean, interquartileRange, quantile, min, max, sum, medianAbsoluteDeviat
 import { subYears, getYear, format, addMinutes, addHours, addDays, addMonths, addYears, subMonths, startOfMonth, startOfDay, startOfYear, endOfYear, endOfMonth, endOfDay, differenceInYears, parse, getHours, getMinutes, setHours, setMinutes, setSeconds } from 'date-fns';
 import { blueGrey, indigo, green, deepOrange, brown, amber, orange, blue, lightGreen } from '@material-ui/core/colors';
 
+const { groupBy } = require("lodash");
 // Conversions
 const conversionFactors = {
   electricity: {

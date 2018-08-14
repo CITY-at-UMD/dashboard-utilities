@@ -36,7 +36,7 @@ import {
   setMinutes,
   setSeconds
 } from "date-fns";
-
+const { groupBy } = require("lodash");
 // Conversions
 const conversionFactors = {
   electricity: {
