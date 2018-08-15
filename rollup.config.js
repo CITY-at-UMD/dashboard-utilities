@@ -16,7 +16,8 @@ export default [
         input,
         output: {
             file: "dist/index.js",
-            format: "cjs",
+            format: "umd",
+            name: "utilities",
             sourcemap
         }
     }
