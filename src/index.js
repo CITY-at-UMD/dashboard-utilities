@@ -306,7 +306,10 @@ const getLastTimestamp = ts => new Date(max(ts.map(v => v[0])));
 // Formatting
 const timeseriesToObject = ts =>
 	ts.reduce((a, b) => Object.assign(a, { [b[0]]: b[1] }), {});
-const objToTimeseries = ts => Object.entries(ts).sort((a, b) => a[0] - b[0]);
+const objToTimeseries = ts =>
+	Object.entries(ts)
+		.map(([d, v]) => [Number(d), v])
+		.sort((a, b) => a[0] - b[0]);
 
 // Merging
 const mergeTimeseries = ({ raw = [], clean = [], forecast = [] }) => {

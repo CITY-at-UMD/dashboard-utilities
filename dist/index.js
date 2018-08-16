@@ -427,19 +427,25 @@
   	}, {});
   };
   var objToTimeseries = function objToTimeseries(ts) {
-  	return Object.entries(ts).sort(function (a, b) {
+  	return Object.entries(ts).map(function (_ref2) {
+  		var _ref3 = slicedToArray(_ref2, 2),
+  		    d = _ref3[0],
+  		    v = _ref3[1];
+
+  		return [Number(d), v];
+  	}).sort(function (a, b) {
   		return a[0] - b[0];
   	});
   };
 
   // Merging
-  var mergeTimeseries = function mergeTimeseries(_ref2) {
-  	var _ref2$raw = _ref2.raw,
-  	    raw = _ref2$raw === undefined ? [] : _ref2$raw,
-  	    _ref2$clean = _ref2.clean,
-  	    clean = _ref2$clean === undefined ? [] : _ref2$clean,
-  	    _ref2$forecast = _ref2.forecast,
-  	    forecast = _ref2$forecast === undefined ? [] : _ref2$forecast;
+  var mergeTimeseries = function mergeTimeseries(_ref4) {
+  	var _ref4$raw = _ref4.raw,
+  	    raw = _ref4$raw === undefined ? [] : _ref4$raw,
+  	    _ref4$clean = _ref4.clean,
+  	    clean = _ref4$clean === undefined ? [] : _ref4$clean,
+  	    _ref4$forecast = _ref4.forecast,
+  	    forecast = _ref4$forecast === undefined ? [] : _ref4$forecast;
 
   	var data = objToTimeseries(merge(timeseriesToObject(raw), timeseriesToObject(forecast), timeseriesToObject(clean)));
   	return data;
@@ -541,10 +547,10 @@
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
   	return Object.entries(groupBy(ts, function (v) {
   		return startOfDay(v[0]).valueOf();
-  	})).map(function (_ref3) {
-  		var _ref4 = slicedToArray(_ref3, 2),
-  		    day = _ref4[0],
-  		    timeseries = _ref4[1];
+  	})).map(function (_ref5) {
+  		var _ref6 = slicedToArray(_ref5, 2),
+  		    day = _ref6[0],
+  		    timeseries = _ref6[1];
 
   		return [Number(day), timeseries];
   	});
@@ -623,9 +629,9 @@
   	return data;
   };
   var findMissingDays = function findMissingDays(data) {
-  	var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-  	    startDate = _ref5.startDate,
-  	    endDate = _ref5.endDate;
+  	var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+  	    startDate = _ref7.startDate,
+  	    endDate = _ref7.endDate;
 
   	// Sort Data
   	data = data.sort(function (a, b) {
@@ -731,10 +737,10 @@
   	var baseline = new Map(types.map(function (t) {
   		return [t, calcIntensity(data, t, area, baselineYear.valueOf(), startOfMonth(endOfYear(baselineYear)).valueOf(), limit, true)];
   	}));
-  	years = years.map(function (_ref6) {
-  		var _ref7 = slicedToArray(_ref6, 2),
-  		    start = _ref7[0],
-  		    end = _ref7[1];
+  	years = years.map(function (_ref8) {
+  		var _ref9 = slicedToArray(_ref8, 2),
+  		    start = _ref9[0],
+  		    end = _ref9[1];
 
   		return [start.valueOf(), types.map(function (t) {
   			var value = calcIntensity(data, t, area, start.valueOf(), end.valueOf(), limit, true);
