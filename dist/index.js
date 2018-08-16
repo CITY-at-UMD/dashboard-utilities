@@ -109,6 +109,7 @@
       parse = _require3.parse;
 
   var groupBy = require("lodash/groupBy");
+  var merge = require("lodash/merge");
   // Conversions
   var conversionFactors = {
   	electricity: {
@@ -430,6 +431,19 @@
   		return a[0] - b[0];
   	});
   };
+
+  // Merging
+  var mergeTimeseries = function mergeTimeseries(_ref2) {
+  	var _ref2$raw = _ref2.raw,
+  	    raw = _ref2$raw === undefined ? [] : _ref2$raw,
+  	    _ref2$clean = _ref2.clean,
+  	    clean = _ref2$clean === undefined ? [] : _ref2$clean,
+  	    _ref2$forecast = _ref2.forecast,
+  	    forecast = _ref2$forecast === undefined ? [] : _ref2$forecast;
+
+  	var data = objToTimeseries(merge(timeseriesToObject(raw), timeseriesToObject(forecast), timeseriesToObject(clean)));
+  	return data;
+  };
   // Reduce
   var reduceTimeseries = function reduceTimeseries() {
   	for (var _len = arguments.length, arrays = Array(_len), _key = 0; _key < _len; _key++) {
@@ -527,10 +541,10 @@
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
   	return Object.entries(groupBy(ts, function (v) {
   		return startOfDay(v[0]).valueOf();
-  	})).map(function (_ref2) {
-  		var _ref3 = slicedToArray(_ref2, 2),
-  		    day = _ref3[0],
-  		    timeseries = _ref3[1];
+  	})).map(function (_ref3) {
+  		var _ref4 = slicedToArray(_ref3, 2),
+  		    day = _ref4[0],
+  		    timeseries = _ref4[1];
 
   		return [Number(day), timeseries];
   	});
@@ -609,9 +623,9 @@
   	return data;
   };
   var findMissingDays = function findMissingDays(data) {
-  	var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-  	    startDate = _ref4.startDate,
-  	    endDate = _ref4.endDate;
+  	var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+  	    startDate = _ref5.startDate,
+  	    endDate = _ref5.endDate;
 
   	// Sort Data
   	data = data.sort(function (a, b) {
@@ -717,10 +731,10 @@
   	var baseline = new Map(types.map(function (t) {
   		return [t, calcIntensity(data, t, area, baselineYear.valueOf(), startOfMonth(endOfYear(baselineYear)).valueOf(), limit, true)];
   	}));
-  	years = years.map(function (_ref5) {
-  		var _ref6 = slicedToArray(_ref5, 2),
-  		    start = _ref6[0],
-  		    end = _ref6[1];
+  	years = years.map(function (_ref6) {
+  		var _ref7 = slicedToArray(_ref6, 2),
+  		    start = _ref7[0],
+  		    end = _ref7[1];
 
   		return [start.valueOf(), types.map(function (t) {
   			var value = calcIntensity(data, t, area, start.valueOf(), end.valueOf(), limit, true);
@@ -954,7 +968,8 @@
   	getLastTimestamp: getLastTimestamp,
   	getFirstTimestamp: getFirstTimestamp,
   	timeseriesToObject: timeseriesToObject,
-  	objToTimeseries: objToTimeseries
+  	objToTimeseries: objToTimeseries,
+  	mergeTimeseries: mergeTimeseries
   };
 
 }());

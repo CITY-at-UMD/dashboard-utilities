@@ -44,6 +44,7 @@ const {
 	parse
 } = require("date-fns");
 const groupBy = require("lodash/groupBy");
+const merge = require("lodash/merge");
 // Conversions
 const conversionFactors = {
 	electricity: {
@@ -306,6 +307,18 @@ const getLastTimestamp = ts => new Date(max(ts.map(v => v[0])));
 const timeseriesToObject = ts =>
 	ts.reduce((a, b) => Object.assign(a, { [b[0]]: b[1] }), {});
 const objToTimeseries = ts => Object.entries(ts).sort((a, b) => a[0] - b[0]);
+
+// Merging
+const mergeTimeseries = ({ raw = [], clean = [], forecast = [] }) => {
+	let data = objToTimeseries(
+		merge(
+			timeseriesToObject(raw),
+			timeseriesToObject(forecast),
+			timeseriesToObject(clean)
+		)
+	);
+	return data;
+};
 // Reduce
 const reduceTimeseries = (...arrays) =>
 	[
@@ -795,5 +808,6 @@ module.exports = {
 	getLastTimestamp,
 	getFirstTimestamp,
 	timeseriesToObject,
-	objToTimeseries
+	objToTimeseries,
+	mergeTimeseries
 };
