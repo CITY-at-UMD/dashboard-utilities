@@ -374,7 +374,7 @@ const valuesTimeseries = data => data.map(v => v[1]);
 const sortTimeseries = ts => ts.sort((a, b) => a[0] - b[0]);
 // Grouping
 const groupTimeseriesDay = ts =>
-	Object.entries(_.groupBy(ts, v => startOfDay(v[0]))).map(
+	Object.entries(groupBy(ts, v => startOfDay(v[0]))).map(
 		([day, timeseries]) => [new Date(day), timeseries]
 	);
 const groupTimeseries = (data, interval) => {

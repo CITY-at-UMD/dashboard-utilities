@@ -549,7 +549,7 @@
   };
   // Grouping
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
-  	return Object.entries(_.groupBy(ts, function (v) {
+  	return Object.entries(groupBy(ts, function (v) {
   		return startOfDay(v[0]);
   	})).map(function (_ref5) {
   		var _ref6 = slicedToArray(_ref5, 2),
