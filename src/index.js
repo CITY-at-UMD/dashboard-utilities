@@ -308,7 +308,7 @@ const timeseriesToObject = ts =>
 	ts.reduce((a, b) => Object.assign(a, { [b[0]]: b[1] }), {});
 const objToTimeseries = ts =>
 	Object.entries(ts)
-		.map(([d, v]) => [Number(d), v])
+		.map(([d, v]) => [new Date(d), v])
 		.sort((a, b) => a[0] - b[0]);
 
 // Merging
@@ -369,13 +369,13 @@ const cleanTimeseriesInterpolate = (data, min, max) => {
 // Filtering
 const filterTimeseries = (data, startDate, endDate) =>
 	data.filter(t => t[0] >= startDate && t[0] <= endDate);
-// Mapping
+// Mapping and Sorting
 const valuesTimeseries = data => data.map(v => v[1]);
-
+const sortTimeseries = ts => ts.sort((a, b) => a[0] - b[0]);
 // Grouping
 const groupTimeseriesDay = ts =>
-	Object.entries(groupBy(ts, v => startOfDay(v[0]).valueOf())).map(
-		([day, timeseries]) => [Number(day), timeseries]
+	Object.entries(_.groupBy(ts, v => startOfDay(v[0]))).map(
+		([day, timeseries]) => [new Date(day), timeseries]
 	);
 const groupTimeseries = (data, interval) => {
 	//Supported Intervals: day, month, year
@@ -812,5 +812,6 @@ module.exports = {
 	getFirstTimestamp,
 	timeseriesToObject,
 	objToTimeseries,
-	mergeTimeseries
+	mergeTimeseries,
+	sortTimeseries
 };

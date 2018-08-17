@@ -432,7 +432,7 @@
   		    d = _ref3[0],
   		    v = _ref3[1];
 
-  		return [Number(d), v];
+  		return [new Date(d), v];
   	}).sort(function (a, b) {
   		return a[0] - b[0];
   	});
@@ -536,23 +536,27 @@
   		return t[0] >= startDate && t[0] <= endDate;
   	});
   };
-  // Mapping
+  // Mapping and Sorting
   var valuesTimeseries = function valuesTimeseries(data) {
   	return data.map(function (v) {
   		return v[1];
   	});
   };
-
+  var sortTimeseries = function sortTimeseries(ts) {
+  	return ts.sort(function (a, b) {
+  		return a[0] - b[0];
+  	});
+  };
   // Grouping
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
-  	return Object.entries(groupBy(ts, function (v) {
-  		return startOfDay(v[0]).valueOf();
+  	return Object.entries(_.groupBy(ts, function (v) {
+  		return startOfDay(v[0]);
   	})).map(function (_ref5) {
   		var _ref6 = slicedToArray(_ref5, 2),
   		    day = _ref6[0],
   		    timeseries = _ref6[1];
 
-  		return [Number(day), timeseries];
+  		return [new Date(day), timeseries];
   	});
   };
   var groupTimeseries = function groupTimeseries(data, interval) {
@@ -975,7 +979,8 @@
   	getFirstTimestamp: getFirstTimestamp,
   	timeseriesToObject: timeseriesToObject,
   	objToTimeseries: objToTimeseries,
-  	mergeTimeseries: mergeTimeseries
+  	mergeTimeseries: mergeTimeseries,
+  	sortTimeseries: sortTimeseries
   };
 
 }());
