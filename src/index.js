@@ -305,7 +305,9 @@ const getLastTimestamp = ts => new Date(max(ts.map(v => v[0])));
 
 // Formatting
 const timeseriesToObject = ts =>
-	ts.reduce((a, b) => Object.assign(a, { [b[0]]: b[1] }), {});
+	ts
+		.filter(t => t[1] !== NaN || t[1] !== null)
+		.reduce((a, b) => Object.assign(a, { [b[0]]: b[1] }), {});
 const objToTimeseries = ts =>
 	Object.entries(ts)
 		.map(([d, v]) => [new Date(d), v])
@@ -315,8 +317,8 @@ const objToTimeseries = ts =>
 const mergeTimeseries = ({ raw = [], clean = [], forecast = [] }) => {
 	let data = objToTimeseries(
 		merge(
-			timeseriesToObject(raw),
 			timeseriesToObject(forecast),
+			timeseriesToObject(raw),
 			timeseriesToObject(clean)
 		)
 	);
@@ -465,7 +467,7 @@ const calcEUI = (data, area, startDate, endDate, limit = []) => {
 	let totalEnergy = totalTimeseries(
 		calcMeterTotal(data, "energy", startDate, endDate, limit)
 	);
-	return totalEnergy / area * euiTimeScaler(startDate, endDate);
+	return (totalEnergy / area) * euiTimeScaler(startDate, endDate);
 };
 const calcIntensity = (
 	data,
@@ -480,13 +482,13 @@ const calcIntensity = (
 		let totalEnergy = totalTimeseries(
 			calcMeterTotal(data, type, startDate, endDate, limit)
 		);
-		return totalEnergy / area * euiTimeScaler(startDate, endDate);
+		return (totalEnergy / area) * euiTimeScaler(startDate, endDate);
 	} else {
 		if (!data.hasOwnProperty(type)) return 0;
 		let total = totalTimeseries(
 			filterTimeseries(data[type], startDate, endDate)
 		);
-		let value = total / area * euiTimeScaler(startDate, endDate);
+		let value = (total / area) * euiTimeScaler(startDate, endDate);
 		return btu ? convert(value, type, "energy") : value;
 	}
 };
@@ -515,8 +517,8 @@ const EUIByType = (data, area, startDate, endDate, limit = []) => {
 				}
 				let timeScaler = euiTimeScaler(sd, ed);
 				let value = convert(
-					totalTimeseries(filterTimeseries(data[k], sd, ed)) *
-						timeScaler /
+					(totalTimeseries(filterTimeseries(data[k], sd, ed)) *
+						timeScaler) /
 						area,
 					k,
 					"energy"

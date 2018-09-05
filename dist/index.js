@@ -422,7 +422,9 @@
 
   // Formatting
   var timeseriesToObject = function timeseriesToObject(ts) {
-  	return ts.reduce(function (a, b) {
+  	return ts.filter(function (t) {
+  		return t[1] !== NaN || t[1] !== null;
+  	}).reduce(function (a, b) {
   		return Object.assign(a, defineProperty({}, b[0], b[1]));
   	}, {});
   };
