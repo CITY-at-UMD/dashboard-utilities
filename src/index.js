@@ -49,36 +49,41 @@ const merge = require("lodash/merge");
 const conversionFactors = {
 	electricity: {
 		energy: 3.4121416331, // kWh to kBtu
-		cost: 0.111, //$/kWh,
+		// cost: 0.111, //$/kWh,
 		emissions: 0.53 //CO2e
 	},
 	steam: {
 		energy: 1.19, // lbs to kBtu,
-		cost: 0.0255, //$/lbs,
+		// cost: 0.0255, //$/lbs,
 		emissions: 0.1397 //CO2e
 	},
 	hw: {
 		energy: 1, // kBtu to kBtu,
-		cost: 0, //$/kBtu,
+		// cost: 0, //$/kBtu,
 		emissions: 0 //CO2e
 	},
 	water: {
 		energy: 0, // gals to kBtu,
-		cost: 0.019, //$/gal,
+		// cost: 0.019, //$/gal,
 		emissions: 0 //CO2e
 	},
 	chw: {
 		energy: 12, // TonHrs to kBtu,
-		cost: 0.186, //$/TonHr,
+		// cost: 0.186, //$/TonHr,
 		emissions: 0 //CO2e
 	},
 	ng: {
 		energy: 99.9761, // therm to kBtu,
-		cost: 0, //$/kWh,
+		// cost: 0, //$/kWh,
 		emissions: 11.7 //therm to lbs CO2e
 	}
 };
-const convert = (value, meterType, to) => {
+const convert = (
+	value,
+	meterType,
+	to,
+	conversionFactors = conversionFactors
+) => {
 	return value * conversionFactors[meterType][to];
 };
 // Buildings and Meters
@@ -123,7 +128,7 @@ const parseQueryParams = query =>
 //Map
 const calcScale = (values, units = "") => {
 	values = values.filter(v => v > 0);
-	if (values.length < 1) return { low: 1, high: 2, max: 3 };
+	if (values.length < 1) return { low: 1, high: 2, max: 3, units };
 	return {
 		low: parseInt(quantile(values, 0.5), 10),
 		high: parseInt(quantile(values, 0.75), 10),
@@ -324,6 +329,15 @@ const mergeTimeseries = ({ raw = [], clean = [], forecast = [] }) => {
 	);
 	return data;
 };
+const mergeOrderedTimeseries = (...arrayOfTimeseries) => {
+	let data = arrayOfTimeseries.map(a =>
+		timeseriesToObject(a.map(v => [new Date(v[0]), v[1]]))
+	);
+	let merged = Object.assign(...data.reverse());
+	// console.log(merged);
+	let ts = objToTimeseries(merged);
+	return ts;
+};
 // Reduce
 const reduceTimeseries = (...arrays) =>
 	[
@@ -449,8 +463,42 @@ const findMissingDays = (data, { startDate, endDate } = {}) => {
 	return [...missing];
 };
 
+const calcTotals = (
+	data,
+	totalType,
+	{ typeLimit = [], conversionFactors = conversionFactors }
+) => {
+	let total = Object.keys(data)
+		.filter(k => typeLimit.indexOf(k) === -1)
+		.filter(k => conversionFactors.hasOwnProperty(k) && data[k].length > 0)
+		.map(k => {
+			return data[k].map(v => [
+				v[0],
+				convert(v[1], k, totalType, conversionFactors)
+			]);
+		})
+		.reduce((a, b) => reduceTimeseries(a, b), []);
+	return total;
+};
+const calcDataIntensity = (
+	data = [],
+	area = 1,
+	startDate,
+	endDate,
+	{ typeLimit = [] }
+) => {
+	let total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+	return (total / area) * euiTimeScaler(startDate, endDate);
+};
 // Energy
-const calcMeterTotal = (data, type, startDate, endDate, limit = []) => {
+const calcMeterTotal = (
+	data,
+	type,
+	startDate,
+	endDate,
+	limit = [],
+	conversionFactors = conversionFactors
+) => {
 	let total = Object.keys(data)
 		.filter(k => limit.indexOf(k) === -1)
 		.filter(k => conversionFactors.hasOwnProperty(k) && data[k].length > 0)
@@ -493,7 +541,14 @@ const calcIntensity = (
 	}
 };
 
-const EUIByType = (data, area, startDate, endDate, limit = []) => {
+const EUIByType = (
+	data,
+	area,
+	startDate,
+	endDate,
+	limit = [],
+	conversionFactors = conversionFactors
+) => {
 	let years = new Array(differenceInYears(endDate, startDate) + 1)
 		.fill(0)
 		.map((v, i) => {
@@ -538,7 +593,8 @@ const EUIByYear = (
 	startDate,
 	endDate,
 	limit = [],
-	baselineYear
+	baselineYear,
+	conversionFactors = conversionFactors
 ) => {
 	let years = new Array(differenceInYears(endDate, startDate) + 1)
 		.fill(0)
@@ -815,5 +871,8 @@ module.exports = {
 	timeseriesToObject,
 	objToTimeseries,
 	mergeTimeseries,
-	sortTimeseries
+	mergeOrderedTimeseries,
+	sortTimeseries,
+	calcTotals,
+	calcDataIntensity
 };

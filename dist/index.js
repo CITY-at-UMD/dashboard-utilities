@@ -114,36 +114,38 @@
   var conversionFactors = {
   	electricity: {
   		energy: 3.4121416331, // kWh to kBtu
-  		cost: 0.111, //$/kWh,
+  		// cost: 0.111, //$/kWh,
   		emissions: 0.53 //CO2e
   	},
   	steam: {
   		energy: 1.19, // lbs to kBtu,
-  		cost: 0.0255, //$/lbs,
+  		// cost: 0.0255, //$/lbs,
   		emissions: 0.1397 //CO2e
   	},
   	hw: {
   		energy: 1, // kBtu to kBtu,
-  		cost: 0, //$/kBtu,
+  		// cost: 0, //$/kBtu,
   		emissions: 0 //CO2e
   	},
   	water: {
   		energy: 0, // gals to kBtu,
-  		cost: 0.019, //$/gal,
+  		// cost: 0.019, //$/gal,
   		emissions: 0 //CO2e
   	},
   	chw: {
   		energy: 12, // TonHrs to kBtu,
-  		cost: 0.186, //$/TonHr,
+  		// cost: 0.186, //$/TonHr,
   		emissions: 0 //CO2e
   	},
   	ng: {
   		energy: 99.9761, // therm to kBtu,
-  		cost: 0, //$/kWh,
+  		// cost: 0, //$/kWh,
   		emissions: 11.7 //therm to lbs CO2e
   	}
   };
   var convert = function convert(value, meterType, to) {
+  	var conversionFactors = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : conversionFactors;
+
   	return value * conversionFactors[meterType][to];
   };
   // Buildings and Meters
@@ -198,7 +200,7 @@
   	values = values.filter(function (v) {
   		return v > 0;
   	});
-  	if (values.length < 1) return { low: 1, high: 2, max: 3 };
+  	if (values.length < 1) return { low: 1, high: 2, max: 3, units: units };
   	return {
   		low: parseInt(quantile(values, 0.5), 10),
   		high: parseInt(quantile(values, 0.75), 10),
@@ -449,13 +451,28 @@
   	    _ref4$forecast = _ref4.forecast,
   	    forecast = _ref4$forecast === undefined ? [] : _ref4$forecast;
 
-  	var data = objToTimeseries(merge(timeseriesToObject(raw), timeseriesToObject(forecast), timeseriesToObject(clean)));
+  	var data = objToTimeseries(merge(timeseriesToObject(forecast), timeseriesToObject(raw), timeseriesToObject(clean)));
   	return data;
+  };
+  var mergeOrderedTimeseries = function mergeOrderedTimeseries() {
+  	for (var _len = arguments.length, arrayOfTimeseries = Array(_len), _key = 0; _key < _len; _key++) {
+  		arrayOfTimeseries[_key] = arguments[_key];
+  	}
+
+  	var data = arrayOfTimeseries.map(function (a) {
+  		return timeseriesToObject(a.map(function (v) {
+  			return [new Date(v[0]), v[1]];
+  		}));
+  	});
+  	var merged = Object.assign.apply(Object, toConsumableArray(data.reverse()));
+  	// console.log(merged);
+  	var ts = objToTimeseries(merged);
+  	return ts;
   };
   // Reduce
   var reduceTimeseries = function reduceTimeseries() {
-  	for (var _len = arguments.length, arrays = Array(_len), _key = 0; _key < _len; _key++) {
-  		arrays[_key] = arguments[_key];
+  	for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+  		arrays[_key2] = arguments[_key2];
   	}
 
   	return [].concat(toConsumableArray(arrays.map(function (a) {
@@ -663,9 +680,40 @@
   	return [].concat(toConsumableArray(missing));
   };
 
+  var calcTotals = function calcTotals(data, totalType, _ref8) {
+  	var _ref8$typeLimit = _ref8.typeLimit,
+  	    typeLimit = _ref8$typeLimit === undefined ? [] : _ref8$typeLimit,
+  	    _ref8$conversionFacto = _ref8.conversionFactors,
+  	    conversionFactors = _ref8$conversionFacto === undefined ? conversionFactors : _ref8$conversionFacto;
+
+  	var total = Object.keys(data).filter(function (k) {
+  		return typeLimit.indexOf(k) === -1;
+  	}).filter(function (k) {
+  		return conversionFactors.hasOwnProperty(k) && data[k].length > 0;
+  	}).map(function (k) {
+  		return data[k].map(function (v) {
+  			return [v[0], convert(v[1], k, totalType, conversionFactors)];
+  		});
+  	}).reduce(function (a, b) {
+  		return reduceTimeseries(a, b);
+  	}, []);
+  	return total;
+  };
+  var calcDataIntensity = function calcDataIntensity() {
+  	var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  	var area = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  	var startDate = arguments[2];
+  	var endDate = arguments[3];
+  	var _ref9 = arguments[4];
+  	var _ref9$typeLimit = _ref9.typeLimit;
+
+  	var total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+  	return total / area * euiTimeScaler(startDate, endDate);
+  };
   // Energy
   var calcMeterTotal = function calcMeterTotal(data, type, startDate, endDate) {
   	var limit = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+  	var conversionFactors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : conversionFactors;
 
   	var total = Object.keys(data).filter(function (k) {
   		return limit.indexOf(k) === -1;
@@ -703,6 +751,7 @@
 
   var EUIByType = function EUIByType(data, area, startDate, endDate) {
   	var limit = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+  	var conversionFactors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : conversionFactors;
 
   	var years = new Array(differenceInYears(endDate, startDate) + 1).fill(0).map(function (v, i) {
   		var y = new Date(startDate.getFullYear() + i, 0);
@@ -732,6 +781,7 @@
   var EUIByYear = function EUIByYear(data, area, startDate, endDate) {
   	var limit = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
   	var baselineYear = arguments[5];
+  	var conversionFactors = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : conversionFactors;
 
   	var years = new Array(differenceInYears(endDate, startDate) + 1).fill(0).map(function (v, i) {
   		var y = new Date(startDate.getFullYear() + i, 0);
@@ -743,10 +793,10 @@
   	var baseline = new Map(types.map(function (t) {
   		return [t, calcIntensity(data, t, area, baselineYear.valueOf(), startOfMonth(endOfYear(baselineYear)).valueOf(), limit, true)];
   	}));
-  	years = years.map(function (_ref8) {
-  		var _ref9 = slicedToArray(_ref8, 2),
-  		    start = _ref9[0],
-  		    end = _ref9[1];
+  	years = years.map(function (_ref10) {
+  		var _ref11 = slicedToArray(_ref10, 2),
+  		    start = _ref11[0],
+  		    end = _ref11[1];
 
   		return [start.valueOf(), types.map(function (t) {
   			var value = calcIntensity(data, t, area, start.valueOf(), end.valueOf(), limit, true);
@@ -982,7 +1032,10 @@
   	timeseriesToObject: timeseriesToObject,
   	objToTimeseries: objToTimeseries,
   	mergeTimeseries: mergeTimeseries,
-  	sortTimeseries: sortTimeseries
+  	mergeOrderedTimeseries: mergeOrderedTimeseries,
+  	sortTimeseries: sortTimeseries,
+  	calcTotals: calcTotals,
+  	calcDataIntensity: calcDataIntensity
   };
 
 }());
