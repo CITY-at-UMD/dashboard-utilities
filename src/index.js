@@ -390,8 +390,13 @@ const cleanTimeseriesInterpolate = (data, min, max) => {
 	return data;
 };
 // Filtering
-const filterTimeseries = (data, startDate, endDate) =>
-	data.filter(t => t[0] >= startDate && t[0] <= endDate);
+const filterTimeseries = (data, startDate, endDate) => {
+	startDate = new Date(startDate);
+	endDate = new Date(endDate);
+	return data
+		.map(([date, value]) => [new Date(date), value])
+		.filter(t => t[0] >= startDate && t[0] <= endDate);
+};
 // Mapping and Sorting
 const valuesTimeseries = data => data.map(v => v[1]);
 const sortTimeseries = ts => ts.sort((a, b) => a[0] - b[0]);

@@ -567,7 +567,15 @@
   };
   // Filtering
   var filterTimeseries = function filterTimeseries(data, startDate, endDate) {
-  	return data.filter(function (t) {
+  	startDate = new Date(startDate);
+  	endDate = new Date(endDate);
+  	return data.map(function (_ref9) {
+  		var _ref10 = slicedToArray(_ref9, 2),
+  		    date = _ref10[0],
+  		    value = _ref10[1];
+
+  		return [new Date(date), value];
+  	}).filter(function (t) {
   		return t[0] >= startDate && t[0] <= endDate;
   	});
   };
@@ -586,10 +594,10 @@
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
   	return Object.entries(groupBy(ts, function (v) {
   		return startOfDay(v[0]);
-  	})).map(function (_ref9) {
-  		var _ref10 = slicedToArray(_ref9, 2),
-  		    day = _ref10[0],
-  		    timeseries = _ref10[1];
+  	})).map(function (_ref11) {
+  		var _ref12 = slicedToArray(_ref11, 2),
+  		    day = _ref12[0],
+  		    timeseries = _ref12[1];
 
   		return [new Date(day), timeseries];
   	});
@@ -668,9 +676,9 @@
   	return data;
   };
   var findMissingDays = function findMissingDays(data) {
-  	var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-  	    startDate = _ref11.startDate,
-  	    endDate = _ref11.endDate;
+  	var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+  	    startDate = _ref13.startDate,
+  	    endDate = _ref13.endDate;
 
   	// Sort Data
   	data = data.sort(function (a, b) {
@@ -696,11 +704,11 @@
   	return [].concat(toConsumableArray(missing));
   };
 
-  var calcTotals = function calcTotals(data, totalType, _ref12) {
-  	var _ref12$typeLimit = _ref12.typeLimit,
-  	    typeLimit = _ref12$typeLimit === undefined ? [] : _ref12$typeLimit,
-  	    _ref12$conversionFact = _ref12.conversionFactors,
-  	    conversionFactors = _ref12$conversionFact === undefined ? conversionFactors : _ref12$conversionFact;
+  var calcTotals = function calcTotals(data, totalType, _ref14) {
+  	var _ref14$typeLimit = _ref14.typeLimit,
+  	    typeLimit = _ref14$typeLimit === undefined ? [] : _ref14$typeLimit,
+  	    _ref14$conversionFact = _ref14.conversionFactors,
+  	    conversionFactors = _ref14$conversionFact === undefined ? conversionFactors : _ref14$conversionFact;
 
   	var total = Object.keys(data).filter(function (k) {
   		return typeLimit.indexOf(k) === -1;
@@ -720,8 +728,8 @@
   	var area = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   	var startDate = arguments[2];
   	var endDate = arguments[3];
-  	var _ref13 = arguments[4];
-  	var _ref13$typeLimit = _ref13.typeLimit;
+  	var _ref15 = arguments[4];
+  	var _ref15$typeLimit = _ref15.typeLimit;
 
   	var total = totalTimeseries(filterTimeseries(data, startDate, endDate));
   	return total / area * euiTimeScaler(startDate, endDate);
@@ -809,10 +817,10 @@
   	var baseline = new Map(types.map(function (t) {
   		return [t, calcIntensity(data, t, area, baselineYear.valueOf(), startOfMonth(endOfYear(baselineYear)).valueOf(), limit, true)];
   	}));
-  	years = years.map(function (_ref14) {
-  		var _ref15 = slicedToArray(_ref14, 2),
-  		    start = _ref15[0],
-  		    end = _ref15[1];
+  	years = years.map(function (_ref16) {
+  		var _ref17 = slicedToArray(_ref16, 2),
+  		    start = _ref17[0],
+  		    end = _ref17[1];
 
   		return [start.valueOf(), types.map(function (t) {
   			var value = calcIntensity(data, t, area, start.valueOf(), end.valueOf(), limit, true);
