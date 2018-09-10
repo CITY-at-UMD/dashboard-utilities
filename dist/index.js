@@ -484,7 +484,7 @@
   			return [new Date(date).valueOf(), value];
   		});
   	});
-  	var ts = data.map(function (a) {
+  	var ts = [].concat(toConsumableArray(data.map(function (a) {
   		return new Map(a);
   	}).reduce(function (a, b) {
   		var _iteratorNormalCompletion = true;
@@ -513,7 +513,7 @@
   		}
 
   		return a;
-  	}, new Map()).sort(function (a, b) {
+  	}, new Map()))).sort(function (a, b) {
   		return a[0] - b[0];
   	}).map(function (_ref7) {
   		var _ref8 = slicedToArray(_ref7, 2),

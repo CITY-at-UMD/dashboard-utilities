@@ -339,9 +339,12 @@ const mergeOrderedTimeseries = (...arrayOfTimeseries) => {
 	return ts;
 };
 // Reduce
-const reduceTimeseries = (...arrays) =>
-	[
-		...arrays.map(a => new Map(a)).reduce((a, b) => {
+const reduceTimeseries = (...arrays) => {
+	let data = arrays.map(a =>
+		a.map(([date, value]) => [new Date(date).valueOf(), value])
+	);
+	let ts = [
+		...data.map(a => new Map(a)).reduce((a, b) => {
 			for (var date of b.keys()) {
 				a.has(date)
 					? a.set(date, b.get(date) + a.get(date))
@@ -349,7 +352,11 @@ const reduceTimeseries = (...arrays) =>
 			}
 			return a;
 		}, new Map())
-	].sort((a, b) => a[0] - b[0]);
+	]
+		.sort((a, b) => a[0] - b[0])
+		.map(([date, value]) => [new Date(date), value]);
+	return ts;
+};
 // Cleaning
 const cleanTimeseries = (data, replacement, min, max) => {
 	data = data.map(
