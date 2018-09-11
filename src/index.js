@@ -5,6 +5,7 @@ const {
 	deepOrange,
 	brown,
 	amber,
+	grey,
 	orange,
 	blue,
 	lightGreen
@@ -76,6 +77,10 @@ const conversionFactors = {
 		energy: 99.9761, // therm to kBtu,
 		// cost: 0, //$/kWh,
 		emissions: 11.7 //therm to lbs CO2e
+	},
+	oil: {
+		energy: 165.726,
+		emissions: 22.4
 	}
 };
 const convert = (
@@ -430,7 +435,7 @@ const aggregateTimeSeries = (data, interval) => {
 		}
 		return a;
 	}, new Map());
-	data = [...red].map(v => [new Date(v[0]).valueOf(), v[1]]);
+	data = [...red].map(v => [new Date(v[0]), v[1]]);
 	return data;
 };
 const totalTimeseries = data => data.map(a => a[1]).reduce((a, b) => a + b, 0);
@@ -478,7 +483,7 @@ const findMissingDays = (data, { startDate, endDate } = {}) => {
 const calcTotals = (
 	data,
 	totalType,
-	{ typeLimit = [], conversionFactors = conversionFactors }
+	{ typeLimit = [], conversionFactors = conversionFactors } = {}
 ) => {
 	let total = Object.keys(data)
 		.filter(k => typeLimit.indexOf(k) === -1)
@@ -497,7 +502,7 @@ const calcDataIntensity = (
 	area = 1,
 	startDate,
 	endDate,
-	{ typeLimit = [] }
+	{ typeLimit = [] } = {}
 ) => {
 	let total = totalTimeseries(filterTimeseries(data, startDate, endDate));
 	return (total / area) * euiTimeScaler(startDate, endDate);
@@ -763,6 +768,17 @@ const Meters = {
 		demandUnits: "gals/hr",
 		largeDemandUnits: "1,000 gals/hr"
 	},
+	oil: {
+		type: "oil",
+		name: "Fuel Oil",
+		icon: "local_gas_station",
+		color: blue,
+		units: "gals",
+		intensityUnits: "gals/ft²",
+		largeUnits: "1,000 gals",
+		demandUnits: "gals/hr",
+		largeDemandUnits: "1,000 gals/hr"
+	},
 	cost: {
 		type: "cost",
 		name: "Cost",
@@ -797,6 +813,7 @@ const meterOrder = [
 	"ng",
 	"chw",
 	"hw",
+	"oil",
 	"water"
 ];
 const simpleMeter = m => ({
