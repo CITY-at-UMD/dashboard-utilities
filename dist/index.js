@@ -71,6 +71,7 @@
       deepOrange = _require.deepOrange,
       brown = _require.brown,
       amber = _require.amber,
+      grey = _require.grey,
       orange = _require.orange,
       blue = _require.blue,
       lightGreen = _require.lightGreen;
@@ -141,6 +142,10 @@
   		energy: 99.9761, // therm to kBtu,
   		// cost: 0, //$/kWh,
   		emissions: 11.7 //therm to lbs CO2e
+  	},
+  	oil: {
+  		energy: 165.726,
+  		emissions: 22.4
   	}
   };
   var convert = function convert(value, meterType, to) {
@@ -632,7 +637,7 @@
   		return a;
   	}, new Map());
   	data = [].concat(toConsumableArray(red)).map(function (v) {
-  		return [new Date(v[0]).valueOf(), v[1]];
+  		return [new Date(v[0]), v[1]];
   	});
   	return data;
   };
@@ -704,8 +709,9 @@
   	return [].concat(toConsumableArray(missing));
   };
 
-  var calcTotals = function calcTotals(data, totalType, _ref14) {
-  	var _ref14$typeLimit = _ref14.typeLimit,
+  var calcTotals = function calcTotals(data, totalType) {
+  	var _ref14 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+  	    _ref14$typeLimit = _ref14.typeLimit,
   	    typeLimit = _ref14$typeLimit === undefined ? [] : _ref14$typeLimit,
   	    _ref14$conversionFact = _ref14.conversionFactors,
   	    conversionFactors = _ref14$conversionFact === undefined ? conversionFactors : _ref14$conversionFact;
@@ -728,8 +734,9 @@
   	var area = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   	var startDate = arguments[2];
   	var endDate = arguments[3];
-  	var _ref15 = arguments[4];
-  	var _ref15$typeLimit = _ref15.typeLimit;
+
+  	var _ref15 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
+  	    _ref15$typeLimit = _ref15.typeLimit;
 
   	var total = totalTimeseries(filterTimeseries(data, startDate, endDate));
   	return total / area * euiTimeScaler(startDate, endDate);
@@ -941,6 +948,17 @@
   		demandUnits: "gals/hr",
   		largeDemandUnits: "1,000 gals/hr"
   	},
+  	oil: {
+  		type: "oil",
+  		name: "Fuel Oil",
+  		icon: "local_gas_station",
+  		color: blue,
+  		units: "gals",
+  		intensityUnits: "gals/ft²",
+  		largeUnits: "1,000 gals",
+  		demandUnits: "gals/hr",
+  		largeDemandUnits: "1,000 gals/hr"
+  	},
   	cost: {
   		type: "cost",
   		name: "Cost",
@@ -965,7 +983,7 @@
   	}
   };
 
-  var meterOrder = ["eui", "energy", "emissions", "cost", "electricity", "steam", "ng", "chw", "hw", "water"];
+  var meterOrder = ["eui", "energy", "emissions", "cost", "electricity", "steam", "ng", "chw", "hw", "oil", "water"];
   var simpleMeter = function simpleMeter(m) {
   	return {
   		_id: m._id,
