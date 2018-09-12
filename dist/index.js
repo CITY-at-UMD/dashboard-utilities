@@ -394,6 +394,9 @@
   	return range;
   };
 
+  var toObject = function toObject(a, b) {
+  	return Object.assign(a, defineProperty({}, b[0], b[1]));
+  };
   // Timeseries [[dateTime, value, origionalValue], ...]
   // Stats
   var minTimeseries = function minTimeseries(ts) {
@@ -1077,7 +1080,8 @@
   	mergeOrderedTimeseries: mergeOrderedTimeseries,
   	sortTimeseries: sortTimeseries,
   	calcTotals: calcTotals,
-  	calcDataIntensity: calcDataIntensity
+  	calcDataIntensity: calcDataIntensity,
+  	toObject: toObject
   };
 
 }());

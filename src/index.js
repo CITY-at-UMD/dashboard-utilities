@@ -304,6 +304,7 @@ const dateRange = (startDate, endDate, interval, step = 1) => {
 	return range;
 };
 
+const toObject = (a, b) => Object.assign(a, { [b[0]]: b[1] });
 // Timeseries [[dateTime, value, origionalValue], ...]
 // Stats
 const minTimeseries = ts => min(ts.map(v => v[1]));
@@ -903,5 +904,6 @@ module.exports = {
 	mergeOrderedTimeseries,
 	sortTimeseries,
 	calcTotals,
-	calcDataIntensity
+	calcDataIntensity,
+	toObject
 };
