@@ -772,7 +772,7 @@ const Meters = {
 		type: "oil",
 		name: "Fuel Oil",
 		icon: "local_gas_station",
-		color: blue,
+		color: grey,
 		units: "gals",
 		intensityUnits: "gals/ft²",
 		largeUnits: "1,000 gals",
