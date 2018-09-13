@@ -871,6 +871,7 @@
   		units: "kBtu/ft²",
   		intensityUnits: "kBtu/ft²",
   		largeUnits: "kBtu/ft²",
+  		kUnits: "MBtu/ft²",
   		demandUnits: "kBtu/ft²/hr",
   		largeDemandUnits: "kBtu/ft²/hr"
   	},
@@ -882,6 +883,7 @@
   		units: "kBtu",
   		intensityUnits: "kBtu/ft²",
   		largeUnits: "MBtu",
+  		kUnits: "MBtu",
   		demandUnits: "kBtu/hr",
   		largeDemandUnits: "MBtu/hr"
   	},
@@ -893,6 +895,7 @@
   		units: "kWh",
   		intensityUnits: "kWh/ft²",
   		largeUnits: "MWh",
+  		kUnits: "MWh",
   		demandUnits: "kW",
   		largeDemandUnits: "MW"
   	},
@@ -904,6 +907,7 @@
   		units: "lbs",
   		intensityUnits: "lbs/ft²",
   		largeUnits: "1,000 lbs",
+  		kUnits: "klbs",
   		demandUnits: "lbs/hr",
   		largeDemandUnits: "1,000 lbs/hr"
   	},
@@ -915,6 +919,7 @@
   		units: "Therms",
   		intensityUnits: "Therms/ft²",
   		largeUnits: "1,000 Therms",
+  		kUnits: "kTherms",
   		demandUnits: "Therms/hr",
   		largeDemandUnits: "1,000 Therms/hr"
   	},
@@ -926,6 +931,7 @@
   		units: "TonHrs",
   		intensityUnits: "TonHrs/ft²",
   		largeUnits: "1,000 TonHrs",
+  		kUnits: "kTonHrs",
   		demandUnits: "Tons",
   		largeDemandUnits: "1,000 Tons"
   	},
@@ -937,6 +943,7 @@
   		units: "kBtu",
   		intensityUnits: "kBtu/ft²",
   		largeUnits: "Mbtu",
+  		kUnits: "Mbtu",
   		demandUnits: "KBtu/hr",
   		largeDemandUnits: "MBtu/hr"
   	},
@@ -948,6 +955,7 @@
   		units: "gals",
   		intensityUnits: "gals/ft²",
   		largeUnits: "1,000 gals",
+  		kUnits: "kgals",
   		demandUnits: "gals/hr",
   		largeDemandUnits: "1,000 gals/hr"
   	},
@@ -959,6 +967,7 @@
   		units: "gals",
   		intensityUnits: "gals/ft²",
   		largeUnits: "1,000 gals",
+  		kUnits: "kgals",
   		demandUnits: "gals/hr",
   		largeDemandUnits: "1,000 gals/hr"
   	},
@@ -970,6 +979,7 @@
   		units: "$",
   		intensityUnits: "$/ft²",
   		largeUnits: "$1,000",
+  		kUnits: "thousands",
   		demandUnits: "$/hr",
   		largeDemandUnits: "1,000 $/hr"
   	},
@@ -981,6 +991,7 @@
   		units: "lbs CO2e",
   		intensityUnits: "lbs CO2e/ft²",
   		largeUnits: "1,000 lbs CO2e",
+  		kUnits: "klbs CO2e",
   		demandUnits: "CO2e/hr",
   		largeDemandUnits: "1,000 CO2e/hr"
   	}
