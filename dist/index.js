@@ -734,12 +734,14 @@
   };
   var calcDataIntensity = function calcDataIntensity() {
   	var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  	var area = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  	var area = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   	var startDate = arguments[2];
   	var endDate = arguments[3];
 
   	var _ref15 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
-  	    _ref15$typeLimit = _ref15.typeLimit;
+  	    _ref15$typeLimit = _ref15.typeLimit,
+  	    _ref15$conversionFact = _ref15.conversionFactors,
+  	    _ref15$convert = _ref15.convert;
 
   	var total = totalTimeseries(filterTimeseries(data, startDate, endDate));
   	return total / area * euiTimeScaler(startDate, endDate);

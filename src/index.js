@@ -500,10 +500,14 @@ const calcTotals = (
 };
 const calcDataIntensity = (
 	data = [],
-	area = 1,
+	area = 0,
 	startDate,
 	endDate,
-	{ typeLimit = [] } = {}
+	{
+		typeLimit = [],
+		conversionFactors = conversionFactors,
+		convert = false
+	} = {}
 ) => {
 	let total = totalTimeseries(filterTimeseries(data, startDate, endDate));
 	return (total / area) * euiTimeScaler(startDate, endDate);
