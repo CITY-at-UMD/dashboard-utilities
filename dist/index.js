@@ -743,7 +743,15 @@
   	    _ref15$conversionFact = _ref15.conversionFactors,
   	    _ref15$convert = _ref15.convert;
 
-  	var total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+  	data = sortTimeseries(data);
+  	var total = totalTimeseries(data);
+  	if (!startDate || !endDate) {
+  		startDate = data[0][0];
+  		endDate = data[date.length - 1][0];
+  	}
+  	if (startDate && endDate) {
+  		total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+  	}
   	return total / area * euiTimeScaler(startDate, endDate);
   };
   // Energy

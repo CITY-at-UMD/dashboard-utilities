@@ -509,7 +509,15 @@ const calcDataIntensity = (
 		convert = false
 	} = {}
 ) => {
-	let total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+	data = sortTimeseries(data);
+	let total = totalTimeseries(data);
+	if (!startDate || !endDate) {
+		startDate = data[0][0];
+		endDate = data[date.length - 1][0];
+	}
+	if (startDate && endDate) {
+		total = totalTimeseries(filterTimeseries(data, startDate, endDate));
+	}
 	return (total / area) * euiTimeScaler(startDate, endDate);
 };
 // Energy
