@@ -144,14 +144,22 @@ const calcScale = (values, units = "") => {
 const chooseIcon = (basename, { low, high }, value) => {
 	let icon = `${basename}-err`;
 	if (!value || !low || !high) return icon;
-	value <= low
-		? (icon = `${basename}-low`)
-		: value <= high
-			? (icon = `${basename}-med`)
-			: (icon = `${basename}-high`);
+	if (value <= low) {
+		icon = `${basename}-low`;
+	} else if (value <= high) {
+		icon = `${basename}-med`;
+	} else {
+		icon = `${basename}-high`;
+	}
 	return icon;
 };
 //Charting Functions
+const timeseriesLabels = t => {
+	if (getMonth(t) === 0) {
+		return format(t, "MMM YYYY");
+	}
+	return getMonth(t) % 2 === 0 ? format(t, "MMMM") : "";
+};
 const timeseriesToXY = (data, scale = 1) =>
 	data.map(v => ({
 		x: new Date(v[0]),
@@ -406,6 +414,9 @@ const filterTimeseries = (data, startDate, endDate) => {
 // Mapping and Sorting
 const valuesTimeseries = data => data.map(v => v[1]);
 const sortTimeseries = ts => ts.sort((a, b) => a[0] - b[0]);
+const sortTS = (a, b) => {
+	return a[0] - b[0];
+};
 // Grouping
 const groupTimeseriesDay = ts =>
 	Object.entries(groupBy(ts, v => startOfDay(v[0]))).map(
@@ -928,5 +939,7 @@ module.exports = {
 	sortTimeseries,
 	calcTotals,
 	calcDataIntensity,
-	toObject
+	toObject,
+	timeseriesLabels,
+	sortTS
 };
