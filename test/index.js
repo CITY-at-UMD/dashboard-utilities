@@ -1,13 +1,12 @@
-const { getAvailalbeMeters, Meters } = require("../src/meter.js");
+const fs = require("fs");
+const toObject = (a, b) => {
+	a[b[0]] = b[1];
+	return a;
+};
 
-// console.log(Meters);
-
-console.log(getAvailalbeMeters("steam"));
-console.log(getAvailalbeMeters(["electricity", "steam"]));
-console.log(
-	getAvailalbeMeters([
-		["electricity", "steam"],
-		["electricity", "steam", "chw"],
-		["ng"]
-	])
-);
+let arr = new Array(128)
+	.fill("dOcxXzFS0WqNucT0")
+	.map((v, i) => [String(v + i), (i + 1) * 1438493 * Math.random()])
+	.reduce(toObject, {});
+console.log(arr);
+fs.writeFileSync("test.json", JSON.stringify(arr));

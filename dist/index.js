@@ -219,10 +219,22 @@
 
   	var icon = basename + "-err";
   	if (!value || !low || !high) return icon;
-  	value <= low ? icon = basename + "-low" : value <= high ? icon = basename + "-med" : icon = basename + "-high";
+  	if (value <= low) {
+  		icon = basename + "-low";
+  	} else if (value <= high) {
+  		icon = basename + "-med";
+  	} else {
+  		icon = basename + "-high";
+  	}
   	return icon;
   };
   //Charting Functions
+  var timeseriesLabels = function timeseriesLabels(t) {
+  	if (getMonth(t) === 0) {
+  		return format(t, "MMM YYYY");
+  	}
+  	return getMonth(t) % 2 === 0 ? format(t, "MMMM") : "";
+  };
   var timeseriesToXY = function timeseriesToXY(data) {
   	var scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   	return data.map(function (v) {
@@ -597,6 +609,9 @@
   	return ts.sort(function (a, b) {
   		return a[0] - b[0];
   	});
+  };
+  var sortTS = function sortTS(a, b) {
+  	return a[0] - b[0];
   };
   // Grouping
   var groupTimeseriesDay = function groupTimeseriesDay(ts) {
@@ -1102,7 +1117,9 @@
   	sortTimeseries: sortTimeseries,
   	calcTotals: calcTotals,
   	calcDataIntensity: calcDataIntensity,
-  	toObject: toObject
+  	toObject: toObject,
+  	timeseriesLabels: timeseriesLabels,
+  	sortTS: sortTS
   };
 
 }());
