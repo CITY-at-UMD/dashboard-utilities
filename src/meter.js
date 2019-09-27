@@ -11,6 +11,7 @@ const {
 } = require("@material-ui/core/colors");
 import sum from "simple-statistics/sum";
 import { filterTimeseries, totalTimeseries, euiTimeScaler } from "./index.js";
+
 // Conversions
 const conversionFactors = {
 	electricity: {
@@ -214,7 +215,6 @@ const getAvailalbeMeters = (
 	if (total) utilities.unshift("energy");
 	return utilities;
 };
-
 const calculateBreakdown = (startDate, endDate, ...utilities) => {
 	// [{type, data}]
 	let breakdown = utilities.map(({ type, data }) => {
@@ -239,9 +239,8 @@ const calculateEUI = (startDate, endDate, area, ...utilities) => {
 			)
 		)
 	);
-	return total / area * euiTimeScaler(startDate, endDate);
+	return (total / area) * euiTimeScaler(startDate, endDate);
 };
-
 module.exports = {
 	meterOrder,
 	sortMeters,
