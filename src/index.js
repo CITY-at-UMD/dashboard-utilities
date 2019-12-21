@@ -358,14 +358,16 @@ const reduceTimeseries = (...arrays) => {
 		a.map(([date, value]) => [new Date(date).valueOf(), value])
 	);
 	let ts = [
-		...data.map(a => new Map(a)).reduce((a, b) => {
-			for (var date of b.keys()) {
-				a.has(date)
-					? a.set(date, b.get(date) + a.get(date))
-					: a.set(date, b.get(date));
-			}
-			return a;
-		}, new Map())
+		...data
+			.map(a => new Map(a))
+			.reduce((a, b) => {
+				for (var date of b.keys()) {
+					a.has(date)
+						? a.set(date, b.get(date) + a.get(date))
+						: a.set(date, b.get(date));
+				}
+				return a;
+			}, new Map())
 	]
 		.sort((a, b) => a[0] - b[0])
 		.map(([date, value]) => [new Date(date), value]);
@@ -373,8 +375,8 @@ const reduceTimeseries = (...arrays) => {
 };
 // Cleaning
 const cleanTimeseries = (data, replacement, min, max) => {
-	data = data.map(
-		v => (v[1] > max || v[1] < min ? [v[0], replacement, v[1]] : v)
+	data = data.map(v =>
+		v[1] > max || v[1] < min ? [v[0], replacement, v[1]] : v
 	);
 	return data;
 };
@@ -424,29 +426,33 @@ const groupTimeseriesDay = ts =>
 	);
 const groupTimeseries = (data, interval) => {
 	//Supported Intervals: day, month, year
-	let group = data.map(v => [parse(v[0]).valueOf(), v[1]]).reduce((a, b) => {
-		let t = intervalStart(b[0], interval);
-		if (a.has(t)) {
-			a.set(t, [...a.get(t), b]);
-		} else {
-			a.set(t, [b]);
-		}
-		return a;
-	}, new Map());
+	let group = data
+		.map(v => [parse(v[0]).valueOf(), v[1]])
+		.reduce((a, b) => {
+			let t = intervalStart(b[0], interval);
+			if (a.has(t)) {
+				a.set(t, [...a.get(t), b]);
+			} else {
+				a.set(t, [b]);
+			}
+			return a;
+		}, new Map());
 	return [...group];
 };
 // Aggregation
 const aggregateTimeSeries = (data, interval) => {
 	//Supported Intervals: day, month, year
-	let red = data.map(v => [parse(v[0]), v[1]]).reduce((a, b) => {
-		let ts = intervalStart(b[0], interval);
-		if (!a.has(ts)) {
-			a.set(ts, b[1]);
-		} else {
-			a.set(ts, a.get(ts) + b[1]);
-		}
-		return a;
-	}, new Map());
+	let red = data
+		.map(v => [parse(v[0]), v[1]])
+		.reduce((a, b) => {
+			let ts = intervalStart(b[0], interval);
+			if (!a.has(ts)) {
+				a.set(ts, b[1]);
+			} else {
+				a.set(ts, a.get(ts) + b[1]);
+			}
+			return a;
+		}, new Map());
 	data = [...red].map(v => [new Date(v[0]), v[1]]);
 	return data;
 };
@@ -613,8 +619,7 @@ const EUIByType = (
 				}
 				let timeScaler = euiTimeScaler(sd, ed);
 				let value = convert(
-					(totalTimeseries(filterTimeseries(data[k], sd, ed)) *
-						timeScaler) /
+					(totalTimeseries(filterTimeseries(data[k], sd, ed)) * timeScaler) /
 						area,
 					k,
 					"energy"
@@ -718,7 +723,7 @@ const Meters = {
 	},
 	energy: {
 		type: "energy",
-		name: "Total Energy",
+		name: "Energy",
 		icon: "account_balance",
 		color: blueGrey,
 		units: "kBtu",
